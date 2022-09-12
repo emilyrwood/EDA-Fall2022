@@ -88,7 +88,7 @@ pi
 
 # Summary statistics
 mean(5, 4, 6, 4, 6)
-median(5, 4, 6, 4, 6)
+median(10, 4, 6, 4, 6)
 
 # Conditional statements
 4 > 5
