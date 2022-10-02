@@ -57,10 +57,9 @@ Note: each of these approaches utilize the package "ggplot2". We will be coverin
 
 Visualize count data for categorical variables. 
 
-```{r, fig.height = 3, fig.width = 4}
+```{r fig.height = 3, fig.width = 4}
 ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
   geom_bar()
-
 
 
 ```
