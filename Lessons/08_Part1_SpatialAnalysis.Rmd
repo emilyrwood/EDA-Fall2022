@@ -105,7 +105,7 @@ EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC2021_Processed.csv", strin
 
 #Wrangle so each site has only one record, computing mean ozone and PM2.5 at that site
 EPAair.sites <- EPAair %>% 
-  group_by(Site.Name, COUNTY, mean_lat, mean_lng) %>% 
+  group_by(Site.Name, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
   summarize(
     mean_Ozone = mean(Ozone, na.rm=T),    #What does "na.rm=T" do? Is it necessary?
     mean_PM25 = mean(PM2.5, na.rm=T),
@@ -115,7 +115,7 @@ EPAair.sites <- EPAair %>%
 
 #Convert to a spatial dataframe
 EPAair.sf <- EPAair.sites %>% 
-  st_as_sf(coords = c('mean_lat','mean_lng'),
+  st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'),
            crs=4326)
 
 #View the data using the methods above...
