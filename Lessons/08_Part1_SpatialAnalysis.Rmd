@@ -100,12 +100,12 @@ mapview(GasPlants)
 ```{r Create a spatial dataframe from coordinate data}
 
 #Read in our processed EPA Air dataset, setting the Date column to be dates
-EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE) %>% 
+EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC2021_Processed.csv", stringsAsFactors = TRUE) %>% 
   mutate(Date = ymd(Date))
 
 #Wrangle so each site has only one record, computing mean ozone and PM2.5 at that site
 EPAair.sites <- EPAair %>% 
-  group_by(Site.Name, COUNTY, SITE_LATITUDE, SITE_LONGITUDE) %>% 
+  group_by(Site.Name, COUNTY, mean_lat, mean_lng) %>% 
   summarize(
     mean_Ozone = mean(Ozone, na.rm=T),    #What does "na.rm=T" do? Is it necessary?
     mean_PM25 = mean(PM2.5, na.rm=T),
@@ -115,7 +115,7 @@ EPAair.sites <- EPAair %>%
 
 #Convert to a spatial dataframe
 EPAair.sf <- EPAair.sites %>% 
-  st_as_sf(coords = c('SITE_LONGITUDE','SITE_LATITUDE'),
+  st_as_sf(coords = c('mean_lat','mean_lng'),
            crs=4326)
 
 #View the data using the methods above...
