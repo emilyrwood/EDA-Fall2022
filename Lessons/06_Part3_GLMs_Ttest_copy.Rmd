@@ -74,8 +74,9 @@ O3.onesample
 Ozone.plot <- ggplot(EPAair, aes(x = Ozone)) +
   geom_density(fill = "gray") +
   geom_vline(xintercept = 50, color = "#238b45", lty = 2, size = 0.9) +
-  scale_x_continuous(expand = c(0, 0)) + 
-  scale_y_continuous(expand = c(0, 0))
+scale_x_continuous(expand = c(0, 0)) + 
+scale_y_continuous(expand = c(0, 0))
+
 print(Ozone.plot)
 
 # Format as a GLM
@@ -96,16 +97,19 @@ Are Ozone levels different between 2018 and 2019?
 
 ```{r}
 #First let's look at the data
+
 ggplot(EPAair, aes(x = Ozone, color = as.factor(Year))) +
   geom_freqpoly()
 
 #Format as a t-test
 #EPAair$Ozone will be our continuous dependent variable
 #EPAair$Year will be our categorical variable with two levels (2018 and 2019)
+
 O3.twosample <- t.test(EPAair$Ozone ~ EPAair$Year)
 O3.twosample
 
 # Format as a GLM
+
 O3.twosample2 <- lm(EPAair$Ozone ~ EPAair$Year)
 summary(O3.twosample2)
 

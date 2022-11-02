@@ -18,12 +18,13 @@ editor_options:
 ```{r, message = FALSE}
 library(tidyverse)
 library(agricolae)   
+library(ggplot2)
 
-EPAair <- read.csv("./Data_2022sp/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE)
+EPAair <- read.csv("./Data/Processed/EPAair_O3_PM25_NC1819_Processed.csv", stringsAsFactors = TRUE)
 # Set date to date format
 EPAair$Date <- as.Date(EPAair$Date, format = "%Y-%m-%d")
 
-Litter <- read.csv("./Data_2022sp/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
+Litter <- read.csv("./Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv", stringsAsFactors = TRUE)
 # Set date to date format
 Litter$collectDate <- as.Date(Litter$collectDate , format = "%Y-%m-%d")
 
@@ -48,6 +49,30 @@ Create three plots, each with appropriately formatted axes and legends. Choose a
 #Exercise 1:
 
 
+
+02. 
+
+Boxplotq3 <- 
+  ggplot(EPAair, aes(x = as.factor(Year), y = Ozone)) +
+  geom_boxplot()+
+  stat_summary(geom = "text", fun = max,
+  vjust = -1, size = 4,
+        label = c("b", "a")) +
+  labs (x = "", y = "Ozone AQI value") +
+  ylim(0,150)
+
+print(Boxplotq3)
+
+violinq3 <- 
+  ggplot(EPAair, aes(x = as.factor(Year), y = Ozone)) +
+  geom_violin(draw_quantiles = 0.5) + 
+  stat_summary(geom = "text", fun = max,
+                vjust = -1, size = 4,
+                label = c("b", "a")) + 
+  labs(x = "", y = "Ozone AQI Value") +
+  ylim(0,150)
+  print(violinq3)
+
 ```
 
 ## Linear Regression
@@ -60,11 +85,18 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 
 #Exercise 2: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
-
+PM2.5byOzine.regression <- lm(data = EPAair, PM2.5 ~ Ozone)
+summary(PM2.5byOzine.regression)
 
 #Exercise 3: Build a scatterplot. Add a line and standard error for the linear regression. Add the regression equation to the plot
 
+PM2.5byOzone.Plot <- 
+  ggplot(EPAair, aes(x = Ozone, y = PM2.5)) +
+  geom_point() +
+  geom_smooth(method=lm, color= "dark green")
+  geom_text()# how to add the regression equation to the scatter plot?
 
+print(PM2.5byOzone.Plot)
 
 ```
 
@@ -77,15 +109,31 @@ What other variables can we add to improve model?
 
 #Exercise 4: Build correlation plots and identify more possible explanatory variables to add to the regression.
 
+library(corrplot)
+library(dplyr)
 
+EPAair.subset <- 
+  EPAair %>%
+  select(meanLat:Ozone) %>%
+  na.omit()
 
+view(EPAair.subset)
+
+EPAairCorr <- cor(EPAair.subset)
+corrplot(EPAairCorr, method = "ellipse")
+corrplot.mixed(EPAairCorr, upper = "ellipse")
 
 #Exercise 5: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
+OzonebyALL.regression <- lm(data = EPAair.subset, PM2.5 ~ Ozone +Year + Month + meanLng + meanLat)
 
-
+step(OzonebyALL.regression)
 
 #Exercise 6: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
+
+OzoneBest.regression <- lm(data = EPAair.subset, PM2.5 ~ Ozone + Month + meanLng + meanLat)
+
+step(OzoneBest.regression)
 
 ```
 
@@ -107,7 +155,7 @@ summary(Litter.Totals.anova)
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups$groups
 
-Litter.Totals <- Litter %>%
+Litter.Totals <- Litter.Totals %>%
   mutate( treatgroups = Litter.Totals.groups$groups[plotID,2])
 
 # Graph the results
@@ -126,3 +174,12 @@ print(Litter.Totals.plot)
 ```{r}
 #Exercise 7: Improve the plot```
 
+Litter.Totals.plot <- ggplot(Litter.Totals, aes(x = plotID, y = dryMass)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  stat_summary(geom = "text", fun = max, vjust = -1, size = 3.5,
+               label = c("abc", "ab", "abcd", "bcd", "bcd", "a", 
+                         "d", "abcd", "cd", "d", "abcd", "abcd")) +
+  labs(x = "Plot ID", y = "Dry Mass (g)") +
+  ylim(0, 85)
+print(Litter.Totals.plot)
