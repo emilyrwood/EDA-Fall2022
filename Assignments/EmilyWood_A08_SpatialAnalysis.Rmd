@@ -2,6 +2,7 @@
 title: 'Assignment 8: Spatial Analysis in R'
 author: "Emily Wood"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 geometry: margin=2.54cm

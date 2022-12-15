@@ -1,0 +1,207 @@
+---
+output: 
+  pdf_document:
+    keep_tex: yes
+    fig_caption: yes
+    number_sections: yes
+geometry: margin=2.54cm
+title: "Insert title of project here"
+subtitle: "Web address for GitHub repository"
+author: "Emily Wood"
+fontsize: 12pt
+mainfont: Times New Roman
+
+---
+
+\newpage
+\tableofcontents 
+\newpage
+\listoftables 
+\newpage
+\listoffigures 
+\newpage
+
+```{r setup, include=FALSE}
+#This code chunk will tidy your knit PDF files, wrapping long code lines
+#For it to work, the "formatR" package needs to be installed
+
+#install.packages('formatR')
+
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=80), tidy=TRUE)
+```
+
+```{r setup, include=FALSE}
+# Set your working directory
+
+getwd()
+
+# Load your packages
+
+library('formatR')
+library(tidyverse)
+library(agricolae)
+library(ggplot2)
+library(lubridate)
+library(rworldmap)
+
+
+# Set your ggplot theme
+
+mynewtheme <- theme_grey(base_size = 12) +
+  theme(axis.text = element_text(color = "Dark Green"), 
+        legend.position = "top")
+
+theme_set(mynewtheme)
+
+# Load your datasets
+
+CITESPoaching2016 <- read_csv("/home/guest/EDA_2022/EDA-Fall2022/Project/comptab_2018-01-29 16_00_comma_separated.csv")
+```
+
+
+```{r setup, include=FALSE}
+
+colnames(CITESPoaching2016)
+
+```
+
+```{r}
+#datacleaning 
+
+#rename columns 
+
+colnames(CITESPoaching2016)[which(names(CITESPoaching2016) == "Importer reported quantity")] <- "Importer_reported_quantity"
+
+colnames(CITESPoaching2016)[which(names(CITESPoaching2016) == "Exporter reported quantity")] <- "Exporter_reported_quantity"
+
+colnames(CITESPoaching2016)[which(names(CITESPoaching2016) == "App.")] <- "App"
+
+#fix NAs 
+
+#CITESPoaching2016["Importer_reported_quantity"][is.na(CITESPoaching2016["Importer_reported_quantity"])] <- 0
+
+#CITESPoaching2016["Exporter_reported_quantity"][is.na(CITESPoaching2016["Exporter_reported_quantity"])] <- 0
+
+#create one reported quantity column 
+
+CITESPoaching2016$Reported_quantity <- CITESPoaching2016$Importer_reported_quantity + CITESPoaching2016$Exporter_reported_quantity 
+
+```
+
+
+```{r}
+
+c1<- ggplot(CITESPoaching2016, aes(x=Exporter_reported_quantity ))+ geom_histogram(binwidth=50, colour="blue", fill="light blue", alpha=0.3)+ xlim(0,1500)+ylim(0,2500)+
+  labs(title="Export Distribution") 
+c1
+
+c2<- ggplot(CITESPoaching2016, aes(x=Importer_reported_quantity ))+ geom_histogram(binwidth=50, colour="dark green", fill="light green", alpha=0.3)+ xlim(0,1500)+ylim(0,2500)+
+  labs(title="Import Distribution") 
+c2
+
+CITESPoaching2016["Importer_reported_quantity"][is.na(CITESPoaching2016["Importer_reported_quantity"])] <- 0
+
+CITESPoaching2016["Exporter_reported_quantity"][is.na(CITESPoaching2016["Exporter_reported_quantity"])] <- 0
+
+
+Graphnew <- 
+  ggplot(CITESPoaching2016, aes(x= Exporter_reported_quantity, y= Importer_reported_quantity,color = App, alpha = .3))+
+  geom_point() +
+  xlim(0, 4000000) +
+  ylim(0, 4000000)
+
+print(Graphnew)   
+
+
+Graph1test <- 
+  ggplot(subset(CITESPoaching2016, App == "I"), aes(x= Exporter_reported_quantity, y= Importer_reported_quantity,color = App, alpha = .3)) +
+  geom_point() 
+print(Graph1test)
+
+Graphnew2 <- 
+  ggplot(CITESPoaching2016, aes(x= Importer_reported_quantity, y= Exporter_reported_quantity ))+
+  geom_point(aes(color = App, alpha = .3)) +
+  xlim(0, 4000000) +
+  ylim(0, 4000000)
+
+print(Graphnew2) 
+
+Graphnew3 <- 
+  ggplot(CITESPoaching2016, aes(Reported_quantity, color = Class))+
+  geom_point() +
+  xlim(0, 4000000) +
+  ylim(0, 4000000)
+
+print(Graphnew3) 
+
+test <- ggplot(CITESPoaching2016, aes(x= Importer_reported_quantity, y= Exporter_reported_quantity)) + geom_point()
+
+test
+
+
+
+```
+
+
+# Rationale and Research Questions
+
+Does level of protection, class, term affect the amount exported/imported?
+
+What might the best set of predictors for Poaching?
+
+
+```{r}
+
+#Two way ANOVA
+
+Poaching.2way2 <- lm(data = CITESPoaching2016, Reported_quantity ~ Class + App)
+summary(Poaching.2way2)
+
+Testregression <- lm(data = CITESPoaching2016, Reported_quantity ~ Class)
+
+summary(Testregression)
+
+```
+```{r}
+
+CITESAIC <- lm(data = CITESPoaching2016, Importer_reported_quantity ~ Class + App + Taxon + Term)
+
+step(CITESAIC)
+
+```
+
+
+\newpage
+
+# Dataset Information
+
+
+
+\newpage
+
+# Exploratory Analysis 
+
+
+
+\newpage
+
+# Analysis
+
+
+
+## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
+
+## Question 2: 
+
+
+
+
+\newpage
+
+# Summary and Conclusions
+
+
+\newpage
+
+# References
+<add references here if relevant, otherwise delete this section> 

@@ -1,0 +1,96 @@
+---
+output: 
+  pdf_document:
+    keep_tex: yes
+    fig_caption: yes
+    number_sections: yes
+geometry: margin=2.54cm
+title: "Insert title of project here"
+subtitle: "Web address for GitHub repository"
+author: "Name"
+fontsize: 12pt
+mainfont: Times New Roman
+
+---
+
+\newpage
+\tableofcontents 
+\newpage
+\listoftables 
+\newpage
+\listoffigures 
+\newpage
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+install.packages("trend")
+library(trend)
+install.packages("zoo")
+library(zoo)
+install.packages("Kendall")
+library(Kendall)
+install.packages("tseries")
+library(tseries)
+install.packages("readxl")
+library("readxl")
+
+# Set theme
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+theme_set(mytheme)
+
+#read in data 
+
+NP_Visitation <- read_excel("/home/guest/EDA_2022/EDA-Fall2022/Project/Annual Visitation By Park (1979 - Last Calendar Year) (1).xlsx")
+
+```
+
+
+# Rationale and Research Questions
+
+How does NP visitation change over time 
+
+Is national park visitation affected by seasonality 
+
+
+```{r}
+
+```
+
+
+\newpage
+
+# Dataset Information
+
+
+
+\newpage
+
+# Exploratory Analysis 
+
+
+
+\newpage
+
+# Analysis
+
+
+
+## Question 1: <insert specific question here and add additional subsections for additional questions below, if needed>
+
+## Question 2: 
+
+
+
+
+\newpage
+
+# Summary and Conclusions
+
+
+\newpage
+
+# References
+<add references here if relevant, otherwise delete this section> 
